@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\frontend;
 
 use App\Http\Controllers\Controller;
-use App\Models\pro_cov_time_pics;
 use Illuminate\Http\Request;
+use App\Models\pro_cov_time_comment;
+use App\Models\pro_cov_time_pics;
+use App\Models\FriendRequests;
 use App\Models\Profile;
 use App\User;
 use Auth;
@@ -33,13 +35,15 @@ class TimelinesController extends Controller
         $user = Profile::where('user_id', Auth::id())
                     ->first();
         
-        $timeline_img = DB::table('pro_cov_time_pics')
-            ->join('users', 'pro_cov_time_pics.user_id', '=', 'users.id')
-            ->select('pro_cov_time_pics.*', 'users.*')->orderBy('pro_cov_time_pics.id', 'desc')
-            ->get();
-        //dd($timeline_img);
-        return view('timeline', compact('user','timeline_img'));
-        //return view('timeline');
+        $timeline_img = pro_cov_time_pics::with('profilePic.user')->orderBy('id', 'desc')->get();
+
+        $timeline_comment = pro_cov_time_comment::with('profilePic.user')->orderBy('id', 'desc')->get();
+        
+        $new_friend_list = Profile::with('user')->orderBy('id', 'desc')->paginate(5);
+        //dd($new_friend_list);
+
+     return view('timeline', compact('user','timeline_img', 'timeline_comment', 'new_friend_list'))->with('i',(request()->input('page',1)-1)*5);
+        
     }
 
     /**
@@ -58,11 +62,32 @@ class TimelinesController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function storeComment(Request $request)
     {
-        //
+        $model = new pro_cov_time_comment;
+
+        $model->pics_id = $request->pics_id;
+        $model->user_id = $request->user_id;
+        $model->comment = $request->comment;
+
+        $model->save();
+
+         return redirect()->back();
     }
 
+
+    public function sentFriendRequest(Request $request)
+    {
+        //return $request->user_id;
+        $model = new FriendRequests;
+
+        $model->req_id = Auth::id();
+        $model->user_id = $request->user_id;
+        $model->save();
+
+
+         return redirect()->back();;
+    }
     /**
      * Display the specified resource.
      *

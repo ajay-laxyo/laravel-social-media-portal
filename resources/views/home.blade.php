@@ -201,6 +201,8 @@
 {{-- my timeline start from here --}}
 @foreach($timeline_img as $img)
     <div class="panel panel-white post panel-shadow">
+
+{{-- users profile pic and name and image or content type --}}
         <div class="post-heading">
             <div class="pull-left image"> 
                 <img src="{{ url('storage/'.trim($user['pro_pic'], 'public')) }}" class="avatar" alt="user profile image"> 
@@ -220,67 +222,107 @@
                 <h6 class="text-muted time">5 seconds ago</h6> 
             </div>
         </div>
-        @if(!empty($img->pics) && empty($img->content)) 
+{{-- users profile pic and name and image or content type end --}}
+
+
+{{-- if only image(pro or cover pic) posted --}}
+        @if(!empty($img->pics) && empty($img->content))
         <div class="post-image">
             <img src="{{ url('storage/'.trim($img['pics'], 'public')) }}" class="image show-in-modal" alt="image post"> 
         </div>
+{{-- if only image(pro or cover pic) posted end --}}
+
+
+{{-- when both image and content posted --}}
         @elseif((!empty($img->pics)) && (!empty($img->content)))
         <p style="margin-left: 15px"> {{ $img->content }}</p><br>
         <div class="post-image">
             <img src="{{ url('storage/'.trim($img['pics'], 'public')) }}" class="image show-in-modal" alt="image post"> 
         </div>
-        <div class="post-description">
-            
-            <div class="stats">
-                <a href="#" class="stat-item"> <i class="fa fa-thumbs-up icon"></i> 228 </a>
-                <a href="#" class="stat-item"> <i class="fa fa-retweet icon"></i> 128 </a>
-                <a href="#" class="stat-item"> <i class="fa fa-comments-o icon"></i> 3 </a>
-            </div>
-        </div>
+{{-- when both image and content posted end --}}        
+
+{{-- if only content posted --}}
         @elseif(empty($img->pics))
         <div class="post-description">
+            
             <p>{{ $img->content }}</p>
+            
+        </div>
+        @endif
+{{-- if only content posted end --}}
+
+{{-- like count section  --}} 
+        <div class="post-description">
             <div class="stats">
                 <a href="#" class="stat-item"> <i class="fa fa-thumbs-up icon"></i> 228 </a>
                 <a href="#" class="stat-item"> <i class="fa fa-retweet icon"></i> 128 </a>
                 <a href="#" class="stat-item"> <i class="fa fa-comments-o icon"></i> 3 </a>
             </div>
         </div>
-        @endif
+{{-- like count section end --}}
+
+{{-- comment form section --}}
+
         <div class="post-footer">
-            <input class="form-control add-comment-input" placeholder="Add a comment..." type="text">
-            <ul class="comments-list">
-                <li class="comment">
-                    <a class="pull-left" href="#"> 
-                        <img class="avatar" src="frontend/img/Friends/guy-3.jpg" alt="avatar"> 
-                    </a>
-                    <div class="comment-body">
-                        <div class="comment-heading">
-                            <h4 class="comment-user-name"><a href="#">     Antony andrew lobghi</a>
-                            </h4>
-                            <h5 class="time">7 minutes ago</h5> 
-                        </div>
-                        <p>This is a comment bla bla bla</p>
-                    </div>
-                </li>
-            </ul>
+         <form name="formComment" id="formComment" action="{{ route('comment') }}" method="POST" >
+            @csrf
+            <input type="hidden" name="pics_id" value=" {{ $img->id }} ">
+            <input type="hidden" name="user_id" value=" {{ Auth::user()->id }} ">
+            <input type="text" id="text" class="form-control add-comment-input" placeholder="Add a comment..." autocomplete="off" name="comment" required="">
+         </form>
+ {{-- comment form section end--}}
+
+{{-- comment listing here  --}}
+         @foreach($timeline_comment as $coment)
+            @if($img->id == $coment->pics_id)
+               <ul class="comments-list">
+                   <li class="comment">
+                       <a class="pull-left" href="#"> 
+                           <img class="avatar" src="{{ url('storage/'.trim($coment['profilePic']->pro_pic, 'public')) }}" alt="avatar">
+                       </a>
+                       <div class="comment-body">
+                           <div class="comment-heading">
+                               <h4 class="comment-user-name"><a href="#">{{ $coment['profilePic']['user']->name }}</a>
+                               </h4>
+                               <h5 class="time">7 minutes ago</h5> 
+                           </div>
+                           <p>{{ $coment->comment }}</p>
+                       </div>
+                   </li>
+               </ul>
+            @endif
+         @endforeach
+{{-- comment listing section end  --}}
+
         </div>
     </div>
-
 @endforeach
-                 
-                    <div class="panel panel-white post-load-more panel-shadow text-center">
-                        <button class="btn btn-default"><i class="fa fa-refresh"></i>Load More...</button>
-                    </div>
-                </div>
+{{-- my timeline end here --}}
+{{-- //////////////////////////////////////////////// --}}
+
+            <div class="panel panel-white post-load-more panel-shadow text-center">
+                <button class="btn btn-default"><i class="fa fa-refresh"></i>Load More...</button>
+            </div>
             </div>
         </div>
     </div>
+</div>
 @endsection
 
 
 <script type="text/javascript">
    $("#btnfile").click(function () {
        $("#uploadfile").click();
+   });
+
+   // comment form
+
+
+   $(document).ready(function() {
+    $(document).keyup(function(event) {
+        if (event.keyCode == 13) {
+         $("#formComment").submit();
+        }
+    })
    });
 </script>

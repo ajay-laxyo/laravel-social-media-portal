@@ -25,8 +25,13 @@ Route::post('/store_timeline', 'frontend\HomeController@store_timeline')->name('
 Route::get('/friends', 'frontend\HomeController@friends')->name('friends');
 Route::get('/photos', 'frontend\HomeController@photos')->name('photos');
 
+// timeline controller routing ............//////////
 
 Route::get('/timelime', 'frontend\TimelinesController@index')->name('timeline');
+Route::post('/comment', 'frontend\TimelinesController@storeComment')->name('comment');
+Route::get('/request', 'frontend\TimelinesController@sentFriendRequest')->name('friendRequest');
+
+// dashboard controller routing..................//////////////
 
 Route::get('/dashboard', 'backend\DashboardController@index')->name('dashboard');
 

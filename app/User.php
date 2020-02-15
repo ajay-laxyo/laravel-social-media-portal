@@ -36,4 +36,9 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+    
+    public function cover_pic_time()
+    {
+        return $this->hasMany('App\Models\pro_cov_time_pics');
+    }
 }

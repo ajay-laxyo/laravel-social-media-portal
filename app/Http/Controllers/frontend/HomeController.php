@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\frontend;
 
 use App\Http\Controllers\Controller;
+use App\Models\pro_cov_time_comment;
 use App\Models\pro_cov_time_pics;
 use Illuminate\Http\Request;
 use App\Models\Profile;
@@ -33,8 +34,9 @@ class HomeController extends Controller
         $user_name = User::where('id', Auth::id())
                     ->first();
         $timeline_img = pro_cov_time_pics::where('user_id',Auth::id())->orderBy('id','desc')->get();
+        $timeline_comment = pro_cov_time_comment::with('profilePic.user')->orderBy('id', 'desc')->get();
 
-        return view('home', compact('user','user_name','timeline_img'));
+        return view('home', compact('user','user_name','timeline_img', 'timeline_comment'));
     }
 
     public function about_profile()

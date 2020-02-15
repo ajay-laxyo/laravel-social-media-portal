@@ -7,7 +7,50 @@
                <div class="panel-heading">
                   <h3 class="panel-title">Profile</h3>
                </div>
-               <div class="panel-body"> <img src="{{ url('storage/'.trim($user->pro_pic, 'public')) }}" class="home-avatar img-thumbnail" alt="user profile image"> <a href="#">{{ Auth::user()->name }}</a> </div>
+               <div class="panel-body"> 
+                @if(!empty($user->pro_pic))
+                  <img src="{{ url('storage/'.trim($user->pro_pic, 'public')) }}" class="home-avatar img-thumbnail" alt="user profile image">
+                @else
+                  <img src="frontend/img/Friends/guy-2.jpg" class="home-avatar img-thumbnail" alt="user profile image">
+                  @endif
+                  <a href="#">{{ Auth::user()->name }}</a> 
+               </div>
+            </div>
+            <div class="panel panel-default">
+               <div class="panel-heading">
+                  <h3 class="panel-title">People You May Know</h3>
+               </div>
+               <div class="panel-body">
+
+{{-- loop start here  --}}
+      @foreach($new_friend_list as $friends_list)
+         @if($friends_list['user']->id != Auth::user()->id)
+
+            <div class="notification-row" id="list_{{$friends_list['user']->id}}">
+               <div class="notification-padding">
+                  <div class="sidebar-fa-image img-may-know">
+                     <img class="notifications" src="{{ url('storage/'.trim($friends_list->pro_pic, 'public')) }}">
+                  </div>
+                  <div class="sidebar-fa-text">
+                        <b><a href="#"> {{ $friends_list['user']->name }} </a></b>
+                        <br>
+                        <br>
+                        <button class="btn btn-info" type="submit" id="friendReq" data-id="{{ $friends_list['user']->id }}">
+                           <i class="fa fa-user-plus">Add Friend</i>
+                        </button>
+                    
+                  </div>
+               </div>
+            </div>
+         @endif
+      @endforeach
+{{-- loop end here  --}}
+
+{{-- paginate links --}}      
+      {!! $new_friend_list->links() !!}
+{{-- paginate links --}}      
+
+               </div>
             </div>
             <div class="panel panel-default">
                <div class="panel-heading">
@@ -81,37 +124,7 @@
                   </ul>
                </div>
             </div>
-            <div class="panel panel-default">
-               <div class="panel-heading">
-                  <h3 class="panel-title">People You May Know</h3>
-               </div>
-               <div class="panel-body">
-                  <div class="notification-row">
-                     <div class="notification-padding">
-                        <div class="sidebar-fa-image img-may-know"><img class="notifications" src="frontend/img/Friends/guy-2.jpg"></div>
-                        <div class="sidebar-fa-text"><b><a href="#">Carlos marthur</a></b><br><a class="btn btn-info" href="#"><i class="fa fa-user-plus">Add Friend</i></a></div>
-                     </div>
-                  </div>
-                  <div class="notification-row">
-                     <div class="notification-padding">
-                        <div class="sidebar-fa-image img-may-know"><img class="notifications" src="frontend/img/Friends/woman-1.jpg"></div>
-                        <div class="sidebar-fa-text"><b><a href="#">Maria gustami</a></b><br><a class="btn btn-info" href="#"><i class="fa fa-user-plus">Add Friend</i></a></div>
-                     </div>
-                  </div>
-                  <div class="notification-row">
-                     <div class="notification-padding">
-                        <div class="sidebar-fa-image img-may-know"><img class="notifications" src="frontend/img/Friends/woman-2.jpg"></div>
-                        <div class="sidebar-fa-text"><b><a href="#">Angellina mcblown</a></b><br><a class="btn btn-info" href="#"><i class="fa fa-user-plus">Add Friend</i></a></div>
-                     </div>
-                  </div>
-                  <div class="notification-row">
-                     <div class="notification-padding">
-                        <div class="sidebar-fa-image img-may-know"><img class="notifications" src="frontend/img/Friends/woman-3.jpg"></div>
-                        <div class="sidebar-fa-text"><b><a href="#">Hillary marklein</a></b><br><a class="btn btn-info" href="#"><i class="fa fa-user-plus">Add Friend</i></a></div>
-                     </div>
-                  </div>
-               </div>
-            </div>
+            
          </div>
          <div class="col-md-7 no-paddin-xs">
             <div class="panel profile-info">
@@ -130,68 +143,21 @@
                  </div>
                </form>
             </div>
-            {{-- <div class="panel panel-white post panel-shadow">
-               <div class="post-heading">
-                  <div class="pull-left image"> <img src="frontend/img/Profile/profile.jpg" class="avatar" alt="user profile image"> </div>
-                  <div class="pull-left meta">
-                     <div class="title h5"> <a href="#" class="post-user-name">Nickson Bejarano</a> uploaded a photo. </div>
-                     <h6 class="text-muted time">5 seconds ago</h6>
-                  </div>
-               </div>
-               <div class="post-image"> <img src="frontend/img/Post/place-234-87.jpg" class="image show-in-modal" alt="image post"> </div>
-               <div class="post-description">
-                  <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse eu quam fringilla, convallis risus in, luctus massa. Cras non lacus ut orci lobortis semper quis sit amet nunc. Donec at sem eget eros laoreet maximus in eu ligula</p>
-                  <div class="stats"> <a href="#" class="stat-item"> <i class="fa fa-thumbs-up icon"></i> 228 </a> <a href="#" class="stat-item"> <i class="fa fa-retweet icon"></i> 128 </a> <a href="#" class="stat-item"> <i class="fa fa-comments-o icon"></i> 3 </a> </div>
-               </div>
-               <div class="post-footer">
-                  <input class="form-control add-comment-input" placeholder="Add a comment..." type="text"> 
-                  <ul class="comments-list">
-                     <li class="comment">
-                        <a class="pull-left" href="#"> <img class="avatar" src="frontend/img/Friends/guy-3.jpg" alt="avatar"> </a> 
-                        <div class="comment-body">
-                           <div class="comment-heading">
-                              <h4 class="comment-user-name"><a href="#">Antony andrew lobghi</a></h4>
-                              <h5 class="time">7 minutes ago</h5>
-                           </div>
-                           <p>This is a comment bla bla bla</p>
-                        </div>
-                     </li>
-                     <li class="comment">
-                        <a class="pull-left" href="#"> <img class="avatar" src="frontend/img/Friends/guy-2.jpg" alt="avatar"> </a> 
-                        <div class="comment-body">
-                           <div class="comment-heading">
-                              <h4 class="comment-user-name"><a href="#">Jeferh Smith</a></h4>
-                              <h5 class="time">3 minutes ago</h5>
-                           </div>
-                           <p>This is another comment bla bla bla</p>
-                        </div>
-                     </li>
-                     <li class="comment">
-                        <a class="pull-left" href="#"> <img class="avatar" src="frontend/img/Friends/woman-2.jpg" alt="avatar"> </a> 
-                        <div class="comment-body">
-                           <div class="comment-heading">
-                              <h4 class="comment-user-name"><a href="#">Maria fernanda coronel</a></h4>
-                              <h5 class="time">10 seconds ago</h5>
-                           </div>
-                           <p>Wow! so cool my friend</p>
-                        </div>
-                     </li>
-                  </ul>
-               </div>
-            </div> --}}
+            
 
 
 {{-- /////////////////////////////////////////// --}}
 {{-- my timeline start from here --}}
 @foreach($timeline_img as $img)
-   <?php //print_r($img->name); die; ?>
     <div class="panel panel-white post panel-shadow">
+
+{{-- users profile pic, name and image or content type --}}
         <div class="post-heading">
             <div class="pull-left image"> 
-                <img src="{{ url('storage/'.trim($user['pro_pic'], 'public')) }}" class="avatar" alt="user profile image"> 
+                <img src="{{ url('storage/'.trim($img['profilePic']->pro_pic, 'public')) }}" class="avatar" alt="user profile image"> 
             </div>
             <div class="pull-left meta">
-                <div class="title h5"> <a href="#" class="post-user-name">{{ $img->name }}</a> 
+                <div class="title h5"><a href="#" class="post-user-name">{{ $img['profilePic']['user']->name }}</a>              
                     @if($img->pic_type == 'cover_pic')
                     uploaded a new cover photo. 
                     @elseif($img->pic_type == 'profie_pic')
@@ -205,163 +171,152 @@
                 <h6 class="text-muted time">5 seconds ago</h6> 
             </div>
         </div>
-        @if(!empty($img->pics) && empty($img->content)) 
+{{-- users profile pic and name and image or content type end --}}
+
+
+{{-- if only image(pro or cover pic) posted --}}
+        @if(!empty($img->pics) && empty($img->content))
         <div class="post-image">
             <img src="{{ url('storage/'.trim($img->pics, 'public')) }}" class="image show-in-modal" alt="image post"> 
         </div>
+{{-- if only image(pro or cover pic) posted end --}}
+
+
+{{-- when both image and content posted --}}
         @elseif((!empty($img->pics)) && (!empty($img->content)))
-        <p style="margin-left: 15px"> {{ $img->content }}</p><br>
+        <p style="margin-left: 15px"> {{ $img->content }}</p>
         <div class="post-image">
             <img src="{{ url('storage/'.trim($img->pics, 'public')) }}" class="image show-in-modal" alt="image post"> 
         </div>
-        <div class="post-description">
-            
-            <div class="stats">
-                <a href="#" class="stat-item"> <i class="fa fa-thumbs-up icon"></i> 228 </a>
-                <a href="#" class="stat-item"> <i class="fa fa-retweet icon"></i> 128 </a>
-                <a href="#" class="stat-item"> <i class="fa fa-comments-o icon"></i> 3 </a>
-            </div>
-        </div>
+{{-- when both image and content posted end --}}        
+
+{{-- if only content posted --}}
         @elseif(empty($img->pics))
         <div class="post-description">
+         
             <p>{{ $img->content }}</p>
+            
+        </div>
+        @endif
+{{-- if only content posted end --}}
+
+{{-- like count section  --}}       
+        <div class="post-description">
             <div class="stats">
                 <a href="#" class="stat-item"> <i class="fa fa-thumbs-up icon"></i> 228 </a>
                 <a href="#" class="stat-item"> <i class="fa fa-retweet icon"></i> 128 </a>
                 <a href="#" class="stat-item"> <i class="fa fa-comments-o icon"></i> 3 </a>
             </div>
         </div>
-        @endif
+{{-- like count section end --}}
+
+{{-- comment form section --}}
         <div class="post-footer">
-            <input class="form-control add-comment-input" placeholder="Add a comment..." type="text">
-            <ul class="comments-list">
-                <li class="comment">
-                    <a class="pull-left" href="#"> 
-                        <img class="avatar" src="frontend/img/Friends/guy-3.jpg" alt="avatar"> 
-                    </a>
-                    <div class="comment-body">
-                        <div class="comment-heading">
-                            <h4 class="comment-user-name"><a href="#">     Antony andrew lobghi</a>
-                            </h4>
-                            <h5 class="time">7 minutes ago</h5> 
-                        </div>
-                        <p>This is a comment bla bla bla</p>
-                    </div>
-                </li>
-            </ul>
+         <form name="formComment" id="formComment" action="{{ route('comment') }}" method="POST" >
+            @csrf
+            <input type="hidden" name="pics_id" value=" {{ $img->id }} ">
+            <input type="hidden" name="user_id" value=" {{ Auth::user()->id }} ">
+            <input type="text" id="text" class="form-control add-comment-input" placeholder="Add a comment..." autocomplete="off" name="comment" required="">
+         </form>
+ {{-- comment form section end--}}
+
+{{-- comment listing here  --}}
+         @foreach($timeline_comment as $coment)
+            @if($img->id == $coment->pics_id)
+               <ul class="comments-list">
+                   <li class="comment">
+                       <a class="pull-left" href="#"> 
+                           <img class="avatar" src="{{ url('storage/'.trim($coment['profilePic']->pro_pic, 'public')) }}" alt="avatar"> 
+                       </a>
+                       <div class="comment-body">
+                           <div class="comment-heading">
+                               <h4 class="comment-user-name"><a href="#">{{ $coment['profilePic']['user']->name }}</a>
+                               </h4>
+                               <h5 class="time">7 minutes ago</h5> 
+                           </div>
+                           <p>{{ $coment->comment }}</p>
+                       </div>
+                   </li>
+               </ul>
+            @endif
+         @endforeach
+{{-- comment listing section end  --}}
+
         </div>
     </div>
-
 @endforeach
+{{-- my timeline end here --}}
+{{-- //////////////////////////////////////////////// --}}
 
 
-{{-- <div class="panel panel-white post panel-shadow">
-   <div class="post-heading">
-      <div class="pull-left image"> <img src="frontend/img/Profile/profile.jpg" class="avatar" alt="user profile image"> </div>
-      <div class="pull-left meta">
-         <div class="title h5"> <a href="#" class="post-user-name">Nickson Bejarano</a> uploaded a photo. </div>
-         <h6 class="text-muted time">5 seconds ago</h6>
-      </div>
-   </div>
-   <div class="post-image"> <img src="frontend/img/Post/game.jpg" class="image show-in-modal" alt="image post"> </div>
-   <div class="post-description">
-      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse eu quam fringilla, convallis risus in, luctus massa.</p>
-      <div class="stats"> <a href="#" class="stat-item"> <i class="fa fa-thumbs-up icon"></i> 228 </a> <a href="#" class="stat-item"> <i class="fa fa-retweet icon"></i> 128 </a> <a href="#" class="stat-item"> <i class="fa fa-comments-o icon"></i> 3 </a> </div>
-   </div>
-   <div class="post-footer">
-      <input class="form-control add-comment-input" placeholder="Add a comment..." type="text"> 
-      <ul class="comments-list">
-         <li class="comment">
-            <a class="pull-left" href="#"> <img class="avatar" src="frontend/img/Friends/guy-3.jpg" alt="avatar"> </a> 
-            <div class="comment-body">
-               <div class="comment-heading">
-                  <h4 class="comment-user-name"><a href="#">Antony andrew lobghi</a></h4>
-                  <h5 class="time">7 minutes ago</h5>
-               </div>
-               <p>This is a comment bla bla bla</p>
-            </div>
-         </li>
-         <li class="comment">
-            <a class="pull-left" href="#"> <img class="avatar" src="frontend/img/Friends/guy-2.jpg" alt="avatar"> </a> 
-            <div class="comment-body">
-               <div class="comment-heading">
-                  <h4 class="comment-user-name"><a href="#">Jeferh Smith</a></h4>
-                  <h5 class="time">3 minutes ago</h5>
-               </div>
-               <p>This is another comment bla bla bla</p>
-            </div>
-         </li>
-         <li class="comment">
-            <a class="pull-left" href="#"> <img class="avatar" src="frontend/img/Friends/woman-2.jpg" alt="avatar"> </a> 
-            <div class="comment-body">
-               <div class="comment-heading">
-                  <h4 class="comment-user-name"><a href="#">Maria fernanda coronel</a></h4>
-                  <h5 class="time">10 seconds ago</h5>
-               </div>
-               <p>Wow! so cool my friend</p>
-            </div>
-         </li>
-      </ul>
-   </div>
-</div> --}}
-            {{-- <div class="panel panel-white post panel-shadow">
-               <div class="post-heading">
-                  <div class="pull-left image"> <img src="frontend/img/Profile/profile.jpg" class="avatar" alt="user profile image"> </div>
-                  <div class="pull-left meta">
-                     <div class="title h5"> <a href="#" class="post-user-name">Nickson Bejarano</a> uploaded a photo. </div>
-                     <h6 class="text-muted time">5 seconds ago</h6>
-                  </div>
-               </div>
-               <div class="post-image"> <img src="frontend/img/Post/place1-full2.jpg" class="image show-in-modal" alt="image post"> </div>
-               <div class="post-description">
-                  <p>This is a short description</p>
-                  <div class="stats"> <a href="#" class="stat-item"> <i class="fa fa-thumbs-up icon"></i> 228 </a> <a href="#" class="stat-item"> <i class="fa fa-retweet icon"></i> 128 </a> <a href="#" class="stat-item"> <i class="fa fa-comments-o icon"></i> 3 </a> </div>
-               </div>
-               <div class="post-footer">
-                  <input class="form-control add-comment-input" placeholder="Add a comment..." type="text"> 
-                  <ul class="comments-list">
-                     <li class="comment">
-                        <a class="pull-left" href="#"> <img class="avatar" src="frontend/img/Friends/guy-3.jpg" alt="avatar"> </a> 
-                        <div class="comment-body">
-                           <div class="comment-heading">
-                              <h4 class="comment-user-name"><a href="#">Antony andrew lobghi</a></h4>
-                              <h5 class="time">7 minutes ago</h5>
-                           </div>
-                           <p>This is a comment bla bla bla</p>
-                        </div>
-                     </li>
-                     <li class="comment">
-                        <a class="pull-left" href="#"> <img class="avatar" src="frontend/img/Friends/guy-2.jpg" alt="avatar"> </a> 
-                        <div class="comment-body">
-                           <div class="comment-heading">
-                              <h4 class="comment-user-name"><a href="#">Jeferh Smith</a></h4>
-                              <h5 class="time">3 minutes ago</h5>
-                           </div>
-                           <p>This is another comment bla bla bla</p>
-                        </div>
-                     </li>
-                     <li class="comment">
-                        <a class="pull-left" href="#"> <img class="avatar" src="frontend/img/Friends/woman-2.jpg" alt="avatar"> </a> 
-                        <div class="comment-body">
-                           <div class="comment-heading">
-                              <h4 class="comment-user-name"><a href="#">Maria fernanda coronel</a></h4>
-                              <h5 class="time">10 seconds ago</h5>
-                           </div>
-                           <p>Wow! so cool my friend</p>
-                        </div>
-                     </li>
-                  </ul>
-               </div>
-            </div> --}}
             <div class="panel panel-white post-load-more panel-shadow text-center"><button class="btn btn-default"><i class="fa fa-refresh"></i>Load More...</button>
             </div>
          </div>
       </div>
    </div>
-@endsection
 
 <script type="text/javascript">
-   $("#btnfile").click(function () {
+     
+$(document).ready(function() {
+
+   // for camera icon on click open image select option
+   /*$("#btnfile").click(function () {
        $("#uploadfile").click();
-   });
+   });*/
+
+   $('#friendReq').on('click', function(e){
+
+      var user_id = $(this).data('id');
+      /*$.ajax({
+         type:'POST',
+         url:'/request',
+         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+         data:{user_id: user_id},
+         success:function(){
+            alert(6);
+         }
+      });*/
+
+      
+         e.preventDefault();
+         $.ajax({
+            type:'get',
+            url: "{{route('friendRequest')}}",
+            //headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+            data:{user_id: user_id},
+            success:function(res){
+
+               $('list_'+res).attr('hidden', true);
+            }
+         })
+      
+
+      /**/
+   })
+
+});
+      
+</script>
+@endsection
+
+{{-- {{ route('comment') }} --}}
+
+<script type="text/javascript">
+// comment form
+
+    /*$(document).keyup(function(event) {
+        if (event.keyCode == 13) {
+         $("#formComment").submit();
+        }
+      });*/
+
+   
+   /*$("#btnfile").click(function () {
+       $("#uploadfile").click();
+   });*/
+
+
+
+
+
 </script>
